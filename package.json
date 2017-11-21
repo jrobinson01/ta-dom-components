@@ -1,0 +1,14 @@
+{
+  "name": "ta-dom-components",
+  "version": "0.0.1",
+  "description": "another web-component library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "jrobinsonmedia@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "morphdom": "^2.3.3"
+  }
+}
