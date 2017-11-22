@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>ta-dom components</title>
+    <!-- <script src="https://cdn.rawgit.com/jrobinson01/ta-dom/master/dist/ta-dom.min.js"></script> -->
+    <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="http://localhost:8081/lib/ta-dom.js"></script>
+    <script src="./node_modules/morphdom/dist/morphdom-umd.js"></script>
+  </head>
+  <style>
+    html, body {
+      font-family: sans-serif;
+    }
+  </style>
+  <body>
+    <link rel="import" href="./my-element.html">
+
+    <my-element name="Frank"></my-element>
+    <my-element name="not frank"></my-element>
+  </body>
+</html>
