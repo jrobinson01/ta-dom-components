@@ -81,5 +81,3 @@ MyElement extends TaDom.TaDomElement {
 // register your element
 TaDom.customElement('myElement', 'my-element', MyElement);
 ```
-
-##### Contributing #####
