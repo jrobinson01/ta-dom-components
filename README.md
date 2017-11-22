@@ -13,7 +13,7 @@ Like Polymer, Ta-Dom! Components expose their state as local instance properties
 Unlike React's virtual DOM, in Ta-Dom! you're always dealing with real DOM elements. It's encouraged to use the Ta-Dom! DOM creation library because it's awesome, but you're free to construct your DOM however you see fit. All of the native DOM api's available.
 
 #### Getting Started ####
-`npm install --save jrobinson01/ta-dom-components`
+`npm install --save ta-dom-components`
 
 #### A Simple Ta-Dom Component ####
 ```javascript
