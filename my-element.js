@@ -1,6 +1,6 @@
-<link rel="import" href="./ta-dom-element.html">
-<script>
-  class MyElement extends TaDom.TaDomElement {
+import TaDom from './ta-dom-element.js';
+
+export class MyElement extends TaDom.TaDomElement {
 
     // static getter for css
     static get css() {
@@ -70,7 +70,7 @@
       .sort();
       const el =
       div({class:'outer'},
-        h1({},`${this.greeting}`),
+        h1(`${this.greeting}`),
         div({
           class: 'time',
           'on-click': event => this.onClick(event)
@@ -82,8 +82,6 @@
     }
 
   };
-  
-  // define a TaDom tag function as well as customElement
-  window.TaDom.customElement('myElement', 'my-element', MyElement);
 
-</script>
+  // define a TaDom tag function as well as customElement
+  TaDom.customElement('myElement', 'my-element', MyElement);

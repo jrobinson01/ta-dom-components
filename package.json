@@ -9,6 +9,8 @@
   "author": "jrobinsonmedia@gmail.com",
   "license": "MIT",
   "dependencies": {
-    "morphdom": "^2.3.3"
+    "@webcomponents/webcomponentsjs": "^1.0.19",
+    "morphdom": "github:kozmanbalint/morphdom",
+    "ta-dom": "0.0.3"
   }
 }
