@@ -42,7 +42,7 @@ const compareNodes = function(newNode, oldNode) {
   return morphdom(oldNode, newNode, {
     onNodeDiscarded: node => {
       // TODO: do we have to remove event listeners from discarded nodes?
-      // console.log('node discarded', node);
+      console.log('node discarded', node);
     }
   });
 }
@@ -156,10 +156,10 @@ const TaDomElement = class extends HTMLElement {
   }
 };
 // wrapper for generate() and customElements.define()
-// used to define ta-dom functions for custom elements.
+// returns the ta-dom function to generate the custom element
 const customElement = function(fnName, tag, klass) {
-  TaDom.generate(fnName);
-  return customElements.define(tag, klass);
+  customElements.define(tag, klass);
+  return TaDom.generate(tag);
 };
 
 export default {customElement, TaDomElement};
