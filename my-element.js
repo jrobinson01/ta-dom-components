@@ -51,7 +51,7 @@ export class MyElement extends TaDom.TaDomElement {
     connectedCallback() {
       this.timer = setInterval(() => {
         this.setState({time:this.time});
-      }, 1000);
+      }, 500);
     }
 
     disconnectedCallback() {

@@ -1,5 +1,5 @@
-import TaDom from './node_modules/ta-dom/index.js';
-import morphdom from './node_modules/morphdom/dist/morphdom-esm.js';
+import TaDom from '/node_modules/ta-dom/index.js';
+import morphdom from '/node_modules/morphdom/dist/morphdom-esm.js';
 
 // generate getter/setter pair for prop
 const generateProp = function(element, key, obj) {
