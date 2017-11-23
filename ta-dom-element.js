@@ -103,6 +103,24 @@ const TaDomElement = class extends HTMLElement {
     //no-op
   }
 
+  // override dispatchEvent
+  dispatchEvent(name, detail) {
+    // pass-thru if first param is an event
+    if(name instanceof Event) {
+      return super.dispatchEvent(name);
+    }
+    // default events to composed, bubbles
+    return super.dispatchEvent(new CustomEvent(name, {
+      bubbles: true,
+      composed: true,
+      detail
+    }));
+  }
+
+  // replaces the entire style sheet
+  // TODO: fix that?
+  // Keep a virtual copy of the style as an object
+  // provide updates via js object?
   updateStyles(newStyle) {
     if (!this.styles) {
       // append style!
@@ -157,7 +175,7 @@ const TaDomElement = class extends HTMLElement {
 };
 // wrapper for generate() and customElements.define()
 // returns the ta-dom function to generate the custom element
-const customElement = function(fnName, tag, klass) {
+const customElement = function(tag, klass) {
   customElements.define(tag, klass);
   return TaDom.generate(tag);
 };
