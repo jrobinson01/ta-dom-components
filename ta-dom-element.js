@@ -63,7 +63,6 @@ const TaDomElement = class extends HTMLElement {
     const sProps = this.constructor.properties;
     this.state_ = {};
     const props = {};
-    // const observedAttributes = [];
     this.computedProps_ = [];
     for(let key in sProps) {
       const obj = sProps[key];
@@ -91,6 +90,7 @@ const TaDomElement = class extends HTMLElement {
     this.setState(this.state_);
   }
 
+  // handle attribute changes
   attributeChangedCallback(attribute, oldVal, newVal) {
     if (newVal !== oldVal) {
       if (this[attribute] !== newVal) {
@@ -118,17 +118,29 @@ const TaDomElement = class extends HTMLElement {
   }
 
   // replaces the entire style sheet
-  // TODO: fix that?
-  // Keep a virtual copy of the style as an object
-  // provide updates via js object?
   updateStyles(newStyle) {
+    // first render
     if (!this.styles) {
       // append style!
-      const css = style({}, newStyle);
+      let css;
+      // if inline string, create a style element
+      if (typeof newStyle === 'string') {
+        css = style(newStyle);
+      } else {
+        // if a link element is passed, append
+        css = newStyle;
+      }
+      // const css = style({}, newStyle);
       this.styles = css;
       this.shadowRoot.prepend(css);
     } else {
-      this.styles = compareNodes(style({}, newStyle), this.styles);
+      if (typeof newStyle === 'string') {
+        this.styles = compareNodes(style({}, newStyle), this.styles);
+      } else {
+        // it's an element
+        this.styles = compareNodes(newStyle, this.styles);
+      }
+
     }
   }
 

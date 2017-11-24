@@ -21,9 +21,10 @@ Unlike React's virtual DOM, in Ta-Dom! you're always dealing with real DOM eleme
 import TaDom from './node-modules/ta-dom-components/ta-dom-element.js';
 
 // define your element's class
-MyElement extends TaDom.TaDomElement {
+export class MyElement extends TaDom.TaDomElement {
 
   // define a static getter for your css
+  // alternatively, return a link() element
   static get css() {
     return `
       :host {
@@ -79,5 +80,8 @@ MyElement extends TaDom.TaDomElement {
   }
 }
 // register your element
-TaDom.customElement('myElement', 'my-element', MyElement);
+TaDom.customElement('my-element', MyElement);
 ```
+
+##### More Examples #####
+Check out this [flash card game](https://github.com/jrobinson01/flash-cards) built with Ta-Dom! Components
