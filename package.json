@@ -1,6 +1,6 @@
 {
   "name": "ta-dom-components",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "another web-component library",
   "main": "index.js",
   "scripts": {
