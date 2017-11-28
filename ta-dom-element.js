@@ -76,6 +76,8 @@ const TaDomElement = class extends HTMLElement {
 
   constructor() {
     super();
+    // requestAnimationFrame id
+    this.drawId_ = null;
     // define customer getter/setters for each property
     const sProps = this.constructor.properties;
     this.state_ = {};
@@ -103,6 +105,9 @@ const TaDomElement = class extends HTMLElement {
     Object.defineProperties(this, props);
     // create our shadowRoot
     this.attachShadow({mode: 'open'});
+  }
+
+  connectedCallback() {
     // initialize state
     this.setState(this.state_);
   }
@@ -205,7 +210,8 @@ const TaDomElement = class extends HTMLElement {
       }
     }
     // redraw dom on next animation frame
-    window.requestAnimationFrame(() => {
+    window.cancelAnimationFrame(this.drawId);
+    this.drawId_ = window.requestAnimationFrame(() => {
       const newDom = this.render();
       if (!newDom){
         return;

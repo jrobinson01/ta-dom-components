@@ -1,4 +1,5 @@
 import TaDom from '/ta-dom-element.js';
+import {anotherElement} from './another-element.js';
 
 export default class MyElement extends TaDom.TaDomElement {
 
@@ -77,6 +78,7 @@ export default class MyElement extends TaDom.TaDomElement {
         )
     }
     connectedCallback() {
+      super.connectedCallback();
       this.mousePos$.subscribe(pos => {
         this.mousePos = pos;
       });
@@ -134,7 +136,8 @@ export default class MyElement extends TaDom.TaDomElement {
           slot(),
           maybeMousePos(),
           button({type:'button','on-click': event => this.hasThing = !this.hasThing}, 'toggle thing'),
-          maybeThing()
+          maybeThing(),
+          anotherElement({name:'Howard'})
         )
       )
     }

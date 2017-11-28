@@ -3,7 +3,7 @@ import MyElement from './my-element.js';
 
 const reverse = string => string.split('').reverse().join('');
 
-export default class MyOtherElement extends MyElement {
+export class MyOtherElement extends MyElement {
 
   // completely override css
   static get css() {
@@ -39,4 +39,4 @@ export default class MyOtherElement extends MyElement {
   }
 };
 
-TaDom.customElement('my-other-element', MyOtherElement);
+export const myOtherElement = TaDom.customElement('my-other-element', MyOtherElement);
