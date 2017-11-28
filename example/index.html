@@ -4,15 +4,22 @@
     <title>ta-dom components</title>
     <!-- webcomponents polyfill loader -->
     <script src="/node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <!-- Observables polyfill -->
+    <script src="/es-observables.js"></script>
   </head>
   <style>
     html, body {
       font-family: sans-serif;
     }
+    p {
+      color: gray;
+    }
   </style>
   <body>
     <script src="./my-element.js" type="module"></script>
-    <my-element name="Frank"></my-element>
-    <my-element name="not Frank"></my-element>
+    <script src="./my-other-element.js" type="module"></script>
+    <my-element first-name="Frank"><p>has slotted content</p></my-element>
+    <my-element first-name="not Frank"></my-element>
+    <my-other-element first-name="other"></my-other-element>
   </body>
 </html>

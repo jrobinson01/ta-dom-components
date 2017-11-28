@@ -1,30 +1,47 @@
 import TaDom from '/node_modules/ta-dom/index.js';
 import morphdom from '/node_modules/morphdom/dist/morphdom-esm.js';
 
+//helloWorld -> hello-world
+const camelToDash = function(str){
+  return str
+    .replace(/(^[A-Z])/, ([first]) => first.toLowerCase())
+    .replace(/([A-Z])/g, ([letter]) => `-${letter.toLowerCase()}`)
+}
+
+// hello-world -> helloWorld
+const dashToCamel = function(str) {
+  return str.split('-').map((w, i) => {
+    if(i === 0) {
+      // don't capitalize first word
+      return w;
+    }
+    return w.replace(/(^[a-z])/, ([first]) => first.toUpperCase())
+  }).join('');
+};
+
 // generate getter/setter pair for prop
 const generateProp = function(element, key, obj) {
-  const ret = {};
+  const prop = {};
   if (typeof obj.value === 'function') {
     // function types can only have getters
-    ret.get = function() {
+    prop.get = function() {
       return obj.value();
     }
   } else {
-    ret.get = function() {
+    prop.get = function() {
       return element.state_[key];
     }
-    ret.set = function(newVal) {
+    prop.set = function(newVal) {
+      const oldVal = this.state_[key];
+      // short-circuit if values are the same
+      if (newVal === oldVal) {
+        return;
+      }
       const newState = {};
       newState[key] = newVal;
-      const oldVal = this.state_[key];
-      // don't reflect arrays or objects to attributes
-      // TODO: should probably warn here
-      // ...
-      if (obj.reflectToAttribute && typeof newVal !== 'object' && !Array.isArray(newVal)) {
-        this.setAttribute(key, newVal);
-      }
+      // update state
       element.setState(newState);
-      //
+      // dispatch a changed event
       element.dispatchEvent(new CustomEvent(`${key}-changed`, {
         bubbles: true,
         composed: true,
@@ -35,14 +52,14 @@ const generateProp = function(element, key, obj) {
       }));
     }
   }
-  return ret;
+  return prop;
 }
 
 const compareNodes = function(newNode, oldNode) {
   return morphdom(oldNode, newNode, {
     onNodeDiscarded: node => {
       // TODO: do we have to remove event listeners from discarded nodes?
-      console.log('node discarded', node);
+      // console.log('node discarded', node);
     }
   });
 }
@@ -86,15 +103,22 @@ const TaDomElement = class extends HTMLElement {
     Object.defineProperties(this, props);
     // create our shadowRoot
     this.attachShadow({mode: 'open'});
-    // initial state
+    // initialize state
     this.setState(this.state_);
   }
 
   // handle attribute changes
   attributeChangedCallback(attribute, oldVal, newVal) {
     if (newVal !== oldVal) {
-      if (this[attribute] !== newVal) {
-        this[attribute] = newVal;
+      const key = dashToCamel(attribute);
+      if(typeof this.constructor.properties[key].value === 'boolean') {
+        if(newVal === '') {
+          this[key] = true;
+        } else {
+          this[key] = false;
+        }
+      } else if (this[key] !== newVal) {
+        this[key] = newVal;
       }
     }
   }
@@ -160,14 +184,27 @@ const TaDomElement = class extends HTMLElement {
       update[p.key] = p.fn.apply(null, params);
     });
 
-    // update state
+    // update internal state and possible attributes
     for(let key in update) {
       const val = update[key];
       if (this.state_[key] !== update[key]) {
         this.state_[key] = update[key];
       }
+      if (this.constructor.properties[key].reflectToAttribute) {
+        if (typeof val !== 'object' && !Array.isArray(val)){
+          if(val) {
+
+            this.setAttribute(camelToDash(key), typeof val === 'boolean' ? '' : val);
+          } else {
+            this.removeAttribute(camelToDash(key));
+          }
+
+        } else {
+          console.warn('attempted to reflect an object or array to attribute:', key);
+        }
+      }
     }
-    // redraw dom async
+    // redraw dom on next animation frame
     window.requestAnimationFrame(() => {
       const newDom = this.render();
       if (!newDom){
@@ -175,8 +212,8 @@ const TaDomElement = class extends HTMLElement {
       }
       if (!this.dom) {
         // first render
-        this.updateStyles(this.constructor.css);
         this.dom = newDom;
+        this.updateStyles(this.constructor.css);
         this.shadowRoot.appendChild(this.dom);
       } else {
         // after first render
@@ -191,5 +228,6 @@ const customElement = function(tag, klass) {
   customElements.define(tag, klass);
   return TaDom.generate(tag);
 };
+
 
 export default {customElement, TaDomElement};
