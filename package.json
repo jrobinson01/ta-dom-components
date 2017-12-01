@@ -15,6 +15,6 @@
   "dependencies": {
     "@webcomponents/webcomponentsjs": "^1.0.19",
     "morphdom": "github:kozmanbalint/morphdom",
-    "ta-dom": "^0.0.5"
+    "ta-dom": "^0.0.6"
   }
 }

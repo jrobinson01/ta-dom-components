@@ -88,7 +88,9 @@ export default class MyElement extends TaDom.TaDomElement {
     }
 
     disconnectedCallback() {
+      super.disconnectedCallback();
       this.mousePos$.unsubscribe();
+      this.timer$.unsubscribe();
     }
 
     onClickAdd(event) {
@@ -137,7 +139,7 @@ export default class MyElement extends TaDom.TaDomElement {
           maybeMousePos(),
           button({type:'button','on-click': event => this.hasThing = !this.hasThing}, 'toggle thing'),
           maybeThing(),
-          anotherElement({name:'Howard'})
+          anotherElement({name:'Howard', 'on-click':event => console.log('clicked another')})
         )
       )
     }

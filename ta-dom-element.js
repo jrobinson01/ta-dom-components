@@ -55,11 +55,34 @@ const generateProp = function(element, key, obj) {
   return prop;
 }
 
+// removes listeners from discarded nodes
+const removeListeners = (el) => {
+  if (el.__eventListeners) {
+    el.__eventListeners.forEach(l => {
+      el.removeEventListener(l.eventName, l.fn);
+    });
+  }
+  el.__eventListeners = undefined;
+  if (el.children && el.children.length > 0) {
+    Array.from(el.children).forEach(c => {
+      removeListeners(c);
+    });
+  }
+};
+
+// Each ta-dom element only compares what's inside it's shadow
+// dom. Is there a way to prevent child components from getting
+// recreated all the time?
+// morphdom seems to handle this well.
+// ex:
+// a render function returns:
+// div(myElement({some-attr:this.myProp}))
+// a new myElement will get instantiated, but the existing element may
+// not get replaced.
 const compareNodes = function(newNode, oldNode) {
   return morphdom(oldNode, newNode, {
     onNodeDiscarded: node => {
-      // TODO: do we have to remove event listeners from discarded nodes?
-      // console.log('node discarded', node);
+      removeListeners(node);
     }
   });
 }
@@ -112,6 +135,13 @@ const TaDomElement = class extends HTMLElement {
     this.setState(this.state_);
   }
 
+  disconnectedCallback() {
+    if(this.dom){
+      removeListeners(this.dom);
+      this.dom.remove();
+    }
+  }
+
   // handle attribute changes
   attributeChangedCallback(attribute, oldVal, newVal) {
     if (newVal !== oldVal) {
@@ -147,6 +177,7 @@ const TaDomElement = class extends HTMLElement {
   }
 
   // replaces the entire style sheet
+  // TODO: handle caching external styles somehow??
   updateStyles(newStyle) {
     // first render
     if (!this.styles) {
@@ -211,21 +242,27 @@ const TaDomElement = class extends HTMLElement {
     }
     // redraw dom on next animation frame
     window.cancelAnimationFrame(this.drawId);
-    this.drawId_ = window.requestAnimationFrame(() => {
-      const newDom = this.render();
-      if (!newDom){
-        return;
-      }
-      if (!this.dom) {
-        // first render
-        this.dom = newDom;
-        this.updateStyles(this.constructor.css);
+    // short-circuit if not connected!
+    if(!this.isConnected) {
+      return;
+    }
+    const newDom = this.render();
+    if (!newDom){
+      return;
+    }
+    if (!this.dom) {
+      // first render
+      this.dom = newDom;
+      this.updateStyles(this.constructor.css);
+      this.drawId_ = window.requestAnimationFrame(() => {
         this.shadowRoot.appendChild(this.dom);
-      } else {
+      });
+    } else {
+      this.drawId_ = window.requestAnimationFrame(() => {
         // after first render
-        this.dom = compareNodes(newDom, this.dom);
-      }
-    });
+        compareNodes(newDom, this.dom);
+      });
+    }
   }
 };
 // wrapper for generate() and customElements.define()
